@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fancy Text Generator — Unicode Typography & Aesthetic Font Engine</title>
+  <meta name="description" content="Ultra-fast, zero-dependency Unicode typography generator. 50+ aesthetic fonts, cursive script, gothic fraktur, zalgo glitch text, and decorative frames for Discord, Instagram, and web.">
+  <meta name="keywords" content="fancy text generator, unicode fonts, aesthetic text, zalgo text, gothic font, cursive font, small caps, discord fonts, instagram bio fonts">
+  <meta name="theme-color" content="#6366f1">
+  
+  <!-- OpenGraph / Social Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Fancy Text Generator — Unicode Typography Engine">
+  <meta property="og:description" content="Transform standard text into 50+ aesthetic Unicode fonts, gothic script, vaporwave, zalgo glitch, and decorative frames instantly.">
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content="Fancy Text Generator — Unicode Typography Engine">
+
+  <link rel="stylesheet" href="./src/ui/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-title">
+        <span>✨ Fancy Text Generator</span>
+        <span class="badge">v1.0.0</span>
+      </div>
+      <div class="header-actions">
+        <select id="theme-select" class="theme-select" aria-label="Select Theme">
+          <option value="dark">🌙 Dark Mode</option>
+          <option value="light">☀️ Light Mode</option>
+          <option value="cyberpunk">⚡ Cyberpunk</option>
+          <option value="nord">❄️ Nord</option>
+        </select>
+        <button id="btn-share" class="icon-btn" title="Copy shareable link">
+          🔗 Share
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Text Input Section -->
+    <main>
+      <section class="input-section" aria-label="Text Transformation Controls">
+        <div class="textarea-container">
+          <textarea
+            id="main-input"
+            class="main-input"
+            placeholder="Type or paste your text here..."
+            aria-label="Text to transform"
+            spellcheck="false"
+          ></textarea>
+        </div>
+
+        <div class="input-controls">
+          <!-- Text Metrics Counter -->
+          <div class="metrics-bar" aria-live="polite">
+            <div class="metric-item">Characters: <strong id="metric-chars">0</strong></div>
+            <div class="metric-item">Words: <strong id="metric-words">0</strong></div>
+            <div class="metric-item">UTF-8 Size: <strong id="metric-bytes">0 B</strong></div>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="quick-actions">
+            <button id="btn-paste" class="btn">📋 Paste</button>
+            <button id="btn-clear" class="btn">🗑️ Clear</button>
+          </div>
+        </div>
+
+        <!-- Zalgo Glitch & Decorator Controls -->
+        <div class="zalgo-panel">
+          <div class="zalgo-slider-group">
+            <label for="zalgo-slider"><strong>Zalgo Chaos:</strong> <span id="zalgo-val">4</span></label>
+            <input type="range" id="zalgo-slider" min="1" max="10" value="4" step="1">
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <label for="decorator-select"><strong>Frame / Wing:</strong></label>
+            <select id="decorator-select" class="theme-select" style="min-width: 180px;"></select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filter and Search Bar -->
+      <section class="filter-bar" aria-label="Search and Category Filters">
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+          </svg>
+          <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            placeholder="Search fonts & styles (e.g., 'gothic', 'script', 'bubble', 'vaporwave')..."
+            aria-label="Search typography styles"
+          >
+        </div>
+
+        <div class="category-tabs" role="tablist">
+          <button class="tab-btn active" data-category="all" role="tab">All Styles</button>
+          <button class="tab-btn" data-category="cursive" role="tab">🖋️ Cursive & Script</button>
+          <button class="tab-btn" data-category="gothic" role="tab">🏰 Gothic & Medieval</button>
+          <button class="tab-btn" data-category="aesthetic" role="tab">🌸 Aesthetic & Vaporwave</button>
+          <button class="tab-btn" data-category="social" role="tab">📱 Social & Clean</button>
+          <button class="tab-btn" data-category="decorative" role="tab">✨ Decorative & Bubbles</button>
+          <button class="tab-btn" data-category="glitch" role="tab">👾 Glitch & Zalgo</button>
+          <button class="tab-btn" data-category="obfuscated" role="tab">🔒 Ciphers & Tech</button>
+        </div>
+      </section>
+
+      <!-- Font Cards Output Grid -->
+      <section id="cards-grid" class="cards-grid" aria-label="Generated Font Outputs"></section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>
+        Built with ❤️ for creators, developers, and typography enthusiasts. Zero dependencies. MIT Licensed.
+      </p>
+      <p style="margin-top: 0.5rem;">
+        <a href="https://github.com/your-username/fancy-text-generator" target="_blank" rel="noopener">GitHub Repository</a> • 
+        <a href="https://github.com/your-username/fancy-text-generator/blob/main/LICENSE" target="_blank" rel="noopener">License</a> • 
+        <a href="https://github.com/your-username/fancy-text-generator/issues" target="_blank" rel="noopener">Report Issue</a>
+      </p>
+    </footer>
+  </div>
+
+  <script type="module" src="./src/index.ts"></script>
+</body>
+</html>

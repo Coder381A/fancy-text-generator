@@ -1,0 +1,45 @@
+﻿{
+  "name": "fancy-text-generator",
+  "version": "1.0.0",
+  "description": "Ultra-fast, zero-dependency Unicode typography and aesthetic text transformation engine & modern web app.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "fancy-text",
+    "unicode",
+    "typography",
+    "zalgo",
+    "glitch-text",
+    "aesthetic-text",
+    "font-generator",
+    "cursive-font",
+    "gothic-font",
+    "small-caps",
+    "vaporwave",
+    "text-styling",
+    "social-media-fonts",
+    "discord-fonts",
+    "instagram-fonts"
+  ],
+  "author": "Open Source Community",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/fancy-text-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/fancy-text-generator/issues"
+  },
+  "homepage": "https://your-username.github.io/fancy-text-generator/",
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vite": "^5.2.0"
+  }
+}

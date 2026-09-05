@@ -1,0 +1,760 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fancy Text Generator — Offline Preview</title>
+  <style>
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+
+  /* Light Theme Defaults */
+  --bg-primary: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-focus: #6366f1;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-primary: #6366f1;
+  --accent-secondary: #ec4899;
+  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+  --success: #10b981;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+}
+
+[data-theme="light"] {
+  --bg-primary: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --border-color: rgba(0, 0, 0, 0.08);
+  --border-focus: #4f46e5;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --accent-primary: #4f46e5;
+  --accent-secondary: #db2777;
+  --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #db2777 100%);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="cyberpunk"] {
+  --bg-primary: #0a0612;
+  --bg-surface: #170d2b;
+  --bg-card: rgba(23, 13, 43, 0.85);
+  --border-color: rgba(255, 0, 128, 0.3);
+  --border-focus: #00f0ff;
+  --text-primary: #00f0ff;
+  --text-secondary: #ff71ce;
+  --text-muted: #b967ff;
+  --accent-primary: #ff007f;
+  --accent-secondary: #00f0ff;
+  --accent-gradient: linear-gradient(135deg, #ff007f 0%, #b967ff 50%, #00f0ff 100%);
+  --shadow-md: 0 0 15px rgba(255, 0, 128, 0.2);
+  --shadow-lg: 0 0 30px rgba(0, 240, 255, 0.25);
+}
+
+[data-theme="nord"] {
+  --bg-primary: #2e3440;
+  --bg-surface: #3b4252;
+  --bg-card: rgba(59, 66, 82, 0.8);
+  --border-color: rgba(216, 222, 233, 0.15);
+  --border-focus: #88c0d0;
+  --text-primary: #eceff4;
+  --text-secondary: #d8dee9;
+  --text-muted: #81a1c1;
+  --accent-primary: #88c0d0;
+  --accent-secondary: #81a1c1;
+  --accent-gradient: linear-gradient(135deg, #88c0d0 0%, #81a1c1 50%, #5e81ac 100%);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Background mesh glow */
+.bg-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+              radial-gradient(circle at 85% 85%, rgba(236, 72, 153, 0.12) 0%, transparent 40%);
+  z-index: 0;
+}
+
+.app-wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Header */
+header.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--accent-primary);
+  border: 1px solid var(--border-color);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.icon-btn, .theme-select {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.85rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover, .theme-select:hover {
+  border-color: var(--border-focus);
+  transform: translateY(-1px);
+}
+
+/* Hero & Input Section */
+.input-section {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.textarea-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.main-input {
+  width: 100%;
+  min-height: 120px;
+  padding: 1rem 1.25rem;
+  font-size: 1.25rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.main-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.input-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.metrics-bar {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.metric-item strong {
+  color: var(--text-primary);
+}
+
+.quick-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--accent-gradient);
+  color: white;
+  border: none;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Zalgo Chaos Tuning Panel */
+.zalgo-panel {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.zalgo-slider-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 250px;
+}
+
+.zalgo-slider-group input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent-primary);
+}
+
+/* Search & Categories Bar */
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: var(--border-focus);
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+
+.category-tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.tab-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active, .tab-btn:hover {
+  background: var(--accent-primary);
+  color: #ffffff;
+  border-color: var(--accent-primary);
+}
+
+/* Output Cards Grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.font-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.font-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.card-tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+}
+
+.card-output {
+  font-size: 1.35rem;
+  word-break: break-word;
+  line-height: 1.4;
+  margin-bottom: 1.25rem;
+  min-height: 2.5rem;
+  color: var(--text-primary);
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.copy-btn:hover {
+  opacity: 0.9;
+}
+
+.copy-btn:active {
+  transform: scale(0.96);
+}
+
+/* Toast Notification */
+.toast-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.toast-pill {
+  pointer-events: auto;
+  background: #1e293b;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  padding: 0.75rem 1.25rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-pill.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.toast-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--success);
+}
+
+/* Footer */
+footer.app-footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+footer a {
+  color: var(--accent-primary);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .app-wrapper {
+    padding: 1rem 0.75rem;
+  }
+  .brand-title {
+    font-size: 1.35rem;
+  }
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="app-wrapper">
+    <header class="app-header">
+      <div class="brand-title">
+        <span>✨ Fancy Text Generator</span>
+        <span class="badge">v1.0.0 Standalone</span>
+      </div>
+      <div class="header-actions">
+        <select id="theme-select" class="theme-select" aria-label="Select Theme">
+          <option value="dark">🌙 Dark Mode</option>
+          <option value="light">☀️ Light Mode</option>
+          <option value="cyberpunk">⚡ Cyberpunk</option>
+          <option value="nord">❄️ Nord</option>
+        </select>
+      </div>
+    </header>
+
+    <main>
+      <section class="input-section" aria-label="Text Transformation Controls">
+        <div class="textarea-container">
+          <textarea id="main-input" class="main-input" placeholder="Type or paste your text here..." spellcheck="false">Antigravity Unicode Typography</textarea>
+        </div>
+        <div class="input-controls">
+          <div class="metrics-bar">
+            <div class="metric-item">Characters: <strong id="metric-chars">0</strong></div>
+            <div class="metric-item">Words: <strong id="metric-words">0</strong></div>
+            <div class="metric-item">UTF-8 Size: <strong id="metric-bytes">0 B</strong></div>
+          </div>
+          <div class="quick-actions">
+            <button id="btn-clear" class="btn">🗑️ Clear</button>
+          </div>
+        </div>
+        <div class="zalgo-panel">
+          <div class="zalgo-slider-group">
+            <label for="zalgo-slider"><strong>Zalgo Chaos:</strong> <span id="zalgo-val">4</span></label>
+            <input type="range" id="zalgo-slider" min="1" max="10" value="4" step="1">
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <label for="decorator-select"><strong>Frame / Wing:</strong></label>
+            <select id="decorator-select" class="theme-select" style="min-width: 180px;"></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="filter-bar">
+        <div class="search-wrapper">
+          <input type="text" id="search-input" class="search-input" placeholder="Search 50+ fonts & styles...">
+        </div>
+        <div class="category-tabs">
+          <button class="tab-btn active" data-category="all">All Styles</button>
+          <button class="tab-btn" data-category="cursive">🖋️ Cursive</button>
+          <button class="tab-btn" data-category="gothic">🏰 Gothic</button>
+          <button class="tab-btn" data-category="aesthetic">🌸 Aesthetic</button>
+          <button class="tab-btn" data-category="social">📱 Social</button>
+          <button class="tab-btn" data-category="decorative">✨ Decorative</button>
+          <button class="tab-btn" data-category="glitch">👾 Glitch</button>
+          <button class="tab-btn" data-category="obfuscated">🔒 Ciphers</button>
+        </div>
+      </section>
+
+      <section id="cards-grid" class="cards-grid"></section>
+    </main>
+
+    <footer class="app-footer">
+      <p>Built with ❤️ • Zero External Dependencies • Open Source MIT</p>
+    </footer>
+  </div>
+
+  <script>
+    // Universal fallback script for direct browser execution
+    const DECORATORS = [
+      { id: "wing-1", name: "Royal Wings", prefix: "꧁༺ ", suffix: " ༻꧂" },
+      { id: "wing-2", name: "Star Wings", prefix: "★彡 ", suffix: " 彡★" },
+      { id: "wing-3", name: "Floral Wings", prefix: "✿.｡.:* ", suffix: " *:.｡.✿" },
+      { id: "sparkle-1", name: "Glitter Stars", prefix: "✧･ﾟ: *✧･ﾟ:* ", suffix: " *:･ﾟ✧*:･ﾟ✧" },
+      { id: "frame-1", name: "Double Corner", prefix: "『 ", suffix: " 』" },
+      { id: "frame-2", name: "Japanese Brackets", prefix: "【 ", suffix: " 】" },
+      { id: "kao-1", name: "Joy Wave", prefix: "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ ", suffix: " ✧ﾟ･:*" },
+      { id: "kao-2", name: "Cute Sparkle", prefix: "(｡♥‿♥｡) ", suffix: " (｡♥‿♥｡)" }
+    ];
+
+    function createAlphabetMap(u, l, d) {
+      const map = {};
+      const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const lower = "abcdefghijklmnopqrstuvwxyz";
+      const digits = "0123456789";
+      for (let i = 0; i < upper.length; i++) if (u[i]) map[upper[i]] = u[i];
+      for (let i = 0; i < lower.length; i++) if (l[i]) map[lower[i]] = l[i];
+      if (d) for (let i = 0; i < digits.length; i++) if (d[i]) map[digits[i]] = d[i];
+      return map;
+    }
+
+    const MAP_BOLD = createAlphabetMap(Array.from("𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙"), Array.from("𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳"), Array.from("𝟎𝟏𝟐𝟑𝟒𝟓𝟔𝟕𝟖𝟗"));
+    const MAP_ITALIC = createAlphabetMap(Array.from("𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍"), Array.from("𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧"));
+    const MAP_SCRIPT = createAlphabetMap(["𝒜","ℬ","𝒞","𝒟","ℰ","ℱ","𝒢","ℋ","ℐ","𝒥","𝒦","ℒ","ℳ","𝒩","𝒪","𝒫","𝒬","ℛ","𝒮","𝒯","𝒰","𝒱","𝒲","𝒳","𝒴","𝒵"], ["𝒶","𝒷","𝒸","𝒹","ℯ","𝒻","ℊ","𝒽","𝒾","𝒿","𝓀","𝓁","𝓂","𝓃","ℴ","𝓅","𝓆","𝓇","𝓈","𝓉","𝓊","𝓋","𝓌","𝓍","𝓎","𝓏"]);
+    const MAP_BOLD_SCRIPT = createAlphabetMap(Array.from("𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩"), Array.from("𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝔁𝔂𝔃"));
+    const MAP_FRAKTUR = createAlphabetMap(["𝔄","𝔅","ℭ","𝔇","𝔈","𝔉","𝔊","ℌ","ℑ","𝔍","𝔎","𝔏","𝔐","𝔑","𝔒","𝔓","𝔔","ℜ","𝔖","𝔗","𝔘","𝔙","𝔚","𝔛","𝔜","ℨ"], Array.from("𝔞𝔟𝔠𝔡𝔢𝔣󠁧𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔩"));
+    const MAP_BOLD_FRAKTUR = createAlphabetMap(Array.from("𝕬𝕭𝕮𝕯𝕰𝕱𝕲𝕳𝕴𝕵𝕶𝕷𝕸𝕹𝕺𝕻𝕼𝕽𝕾𝕿𝖀𝖁𝖂𝖃𝖄𝖅"), Array.from("𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟"));
+    const MAP_DOUBLE_STRUCK = createAlphabetMap(["𝔸","𝔹","ℂ","𝔻","𝔼","𝔽","𝔾","ℍ","𝕀","𝕁","𝕂","𝕃","𝕄","ℕ","𝕆","ℙ","ℚ","ℝ","𝕊","𝕋","𝕌","𝕍","𝕎","𝕏","𝕐","ℤ"], Array.from("𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫"), Array.from("𝟘𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡"));
+    const MAP_FULLWIDTH = createAlphabetMap(Array.from("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵ𝑉ＷＸＹＺ"), Array.from("ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ"), Array.from("０１２３４５６７８９"));
+    const MAP_CIRCLED = createAlphabetMap(Array.from("ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ"), Array.from("ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ"), ["⓪","①","②","③","④","⑤","⑥","⑦","⑧","⑨"]);
+    const MAP_SQUARED = createAlphabetMap(Array.from("🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉"), Array.from("🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉"));
+
+    function mapString(str, map) {
+      let out = "";
+      for (const ch of str) out += map[ch] || ch;
+      return out;
+    }
+
+    function strikeThrough(str) {
+      let out = "";
+      for (const ch of str) out += /\s/.test(ch) ? ch : ch + "\u0336";
+      return out;
+    }
+
+    function underLine(str) {
+      let out = "";
+      for (const ch of str) out += /\s/.test(ch) ? ch : ch + "\u0332";
+      return out;
+    }
+
+    function zalgoGen(str, intensity) {
+      const up = ["\u030d", "\u030e", "\u0304", "\u0305", "\u033f", "\u0311", "\u0306", "\u0310", "\u0352", "\u0300", "\u0301"];
+      const down = ["\u0316", "\u0317", "\u0318", "\u0319", "\u031c", "\u0321", "\u0322", "\u0323", "\u0330", "\u0331"];
+      let out = "";
+      for (const ch of str) {
+        if (/\s/.test(ch)) { out += ch; continue; }
+        out += ch;
+        for (let i = 0; i < intensity; i++) out += up[Math.floor(Math.random() * up.length)];
+        for (let i = 0; i < intensity; i++) out += down[Math.floor(Math.random() * down.length)];
+      }
+      return out;
+    }
+
+    const STYLES = [
+      { id: "script", name: "Cursive Script", cat: "cursive", desc: "Handwritten script", fn: (s) => mapString(s, MAP_SCRIPT) },
+      { id: "bold-script", name: "Bold Cursive", cat: "cursive", desc: "Heavy calligraphy", fn: (s) => mapString(s, MAP_BOLD_SCRIPT) },
+      { id: "italic", name: "Italic Serif", cat: "cursive", desc: "Typographic italics", fn: (s) => mapString(s, MAP_ITALIC) },
+      { id: "bold-fraktur", name: "Bold Gothic Fraktur", cat: "gothic", desc: "Old English Blackletter", fn: (s) => mapString(s, MAP_BOLD_FRAKTUR) },
+      { id: "fraktur", name: "Gothic Fraktur", cat: "gothic", desc: "Medieval Fraktur", fn: (s) => mapString(s, MAP_FRAKTUR) },
+      { id: "double-struck", name: "Double-Struck / Blackboard", cat: "gothic", desc: "Mathematical bold", fn: (s) => mapString(s, MAP_DOUBLE_STRUCK) },
+      { id: "bold", name: "Mathematical Bold", cat: "social", desc: "Bold for social bio", fn: (s) => mapString(s, MAP_BOLD) },
+      { id: "fullwidth", name: "Vaporwave / Fullwidth", cat: "aesthetic", desc: "90s aesthetic spacing", fn: (s) => mapString(s, MAP_FULLWIDTH) },
+      { id: "circled", name: "Bubble / Circled", cat: "decorative", desc: "Outlined circle badges", fn: (s) => mapString(s, MAP_CIRCLED) },
+      { id: "squared", name: "Squared Outlined", cat: "decorative", desc: "Block square letter", fn: (s) => mapString(s, MAP_SQUARED) },
+      { id: "strikethrough", name: "Strikethrough", cat: "decorative", desc: "Crossed line", fn: (s) => strikeThrough(s) },
+      { id: "underline", name: "Underline", cat: "decorative", desc: "Bottom line", fn: (s) => underLine(s) }
+    ];
+
+    const input = document.getElementById("main-input");
+    const grid = document.getElementById("cards-grid");
+    const searchInput = document.getElementById("search-input");
+    const zalgoSlider = document.getElementById("zalgo-slider");
+    const zalgoVal = document.getElementById("zalgo-val");
+    const decoratorSelect = document.getElementById("decorator-select");
+    const themeSelect = document.getElementById("theme-select");
+
+    // Populate decorators
+    decoratorSelect.innerHTML = "<option value='none'>No Decorator (Plain)</option>";
+    DECORATORS.forEach(d => {
+      const opt = document.createElement("option");
+      opt.value = d.id;
+      opt.textContent = ${d.name} (Text);
+      decoratorSelect.appendChild(opt);
+    });
+
+    let currentCategory = "all";
+    let zalgoLevel = 4;
+
+    function render() {
+      const raw = input.value || "Antigravity Unicode";
+      const selectedDec = DECORATORS.find(d => d.id === decoratorSelect.value);
+      const query = searchInput.value.toLowerCase().trim();
+
+      // Update metrics
+      document.getElementById("metric-chars").textContent = raw.length;
+      document.getElementById("metric-words").textContent = raw.trim() ? raw.trim().split(/\s+/).length : 0;
+      document.getElementById("metric-bytes").textContent = new TextEncoder().encode(raw).length + " B";
+
+      grid.innerHTML = "";
+
+      // Zalgo card
+      if (currentCategory === "all" || currentCategory === "glitch") {
+        let z = zalgoGen(raw, zalgoLevel);
+        if (selectedDec) z = selectedDec.prefix + z + selectedDec.suffix;
+        createCard(Zalgo Glitch (Level ), "glitch", "Chaotic combining marks", z);
+      }
+
+      STYLES.filter(s => {
+        const catMatch = currentCategory === "all" || s.cat === currentCategory;
+        const searchMatch = !query || s.name.toLowerCase().includes(query);
+        return catMatch && searchMatch;
+      }).forEach(s => {
+        let text = s.fn(raw);
+        if (selectedDec) text = selectedDec.prefix + text + selectedDec.suffix;
+        createCard(s.name, s.cat, s.desc, text);
+      });
+    }
+
+    function createCard(title, cat, desc, out) {
+      const card = document.createElement("div");
+      card.className = "font-card";
+      card.innerHTML = 
+        <div class="card-header">
+          <h3 class="card-title"></h3>
+          <span class="card-tag"></span>
+        </div>
+        <div class="card-output"></div>
+        <div class="card-footer">
+          <span style="font-size: 0.75rem; color: var(--text-muted);"></span>
+          <button class="copy-btn">Copy</button>
+        </div>
+      ;
+      card.querySelector(".copy-btn").addEventListener("click", () => {
+        navigator.clipboard.writeText(out).then(() => alert("Copied to clipboard!"));
+      });
+      grid.appendChild(card);
+    }
+
+    input.addEventListener("input", render);
+    searchInput.addEventListener("input", render);
+    zalgoSlider.addEventListener("input", () => {
+      zalgoLevel = parseInt(zalgoSlider.value);
+      zalgoVal.textContent = zalgoLevel;
+      render();
+    });
+    decoratorSelect.addEventListener("change", render);
+    document.getElementById("btn-clear").addEventListener("click", () => {
+      input.value = "";
+      render();
+    });
+
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentCategory = btn.dataset.category;
+        render();
+      });
+    });
+
+    themeSelect.addEventListener("change", () => {
+      document.documentElement.setAttribute("data-theme", themeSelect.value);
+    });
+
+    render();
+  </script>
+</body>
+</html>
