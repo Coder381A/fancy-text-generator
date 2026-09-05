@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-ff69b4?style=for-the-badge)](CONTRIBUTING.md)
 
-[🚀 Live Interactive Demo](https://Coder381A.github.io/fancy-text-generator/) • [📖 API Documentation](#-library-api-reference) • [✨ Supported Styles](#-supported-styles-matrix) • [🤝 Contributing](CONTRIBUTING.md)
+[🚀 Live Interactive Demo](https://myfancytextgenerator.com/) • [📖 API Documentation](#-library-api-reference) • [✨ Supported Styles](#-supported-styles-matrix) • [🤝 Contributing](CONTRIBUTING.md)
 
 </div>
 
