@@ -5,13 +5,13 @@
 **An ultra-fast, zero-dependency Unicode typography engine & modern responsive web application.**  
 *Transform standard ASCII text into 50+ aesthetic fonts, gothic script, vaporwave, zalgo glitch text, and decorative frames.*
 
-[![CI Workflow](https://img.shields.io/badge/CI-Passing-success?style=for-the-badge&logo=github-actions)](https://github.com/your-username/fancy-text-generator/actions)
+[![CI Workflow](https://img.shields.io/badge/CI-Passing-success?style=for-the-badge&logo=github-actions)](https://github.com/Coder381A/fancy-text-generator/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-brightgreen?style=for-the-badge)](package.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-ff69b4?style=for-the-badge)](CONTRIBUTING.md)
 
-[🚀 Live Interactive Demo](https://your-username.github.io/fancy-text-generator/) • [📖 API Documentation](#-library-api-reference) • [✨ Supported Styles](#-supported-styles-matrix) • [🤝 Contributing](CONTRIBUTING.md)
+[🚀 Live Interactive Demo](https://Coder381A.github.io/fancy-text-generator/) • [📖 API Documentation](#-library-api-reference) • [✨ Supported Styles](#-supported-styles-matrix) • [🤝 Contributing](CONTRIBUTING.md)
 
 </div>
 
@@ -53,7 +53,7 @@
 
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/your-username/fancy-text-generator.git
+git clone https://github.com/Coder381A/fancy-text-generator.git
 cd fancy-text-generator
 npm install
 ```
@@ -166,7 +166,7 @@ fancy-text-generator/
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome!  
-Feel free to check the [issues page](https://github.com/your-username/fancy-text-generator/issues).
+Feel free to check the [issues page](https://github.com/Coder381A/fancy-text-generator/issues).
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
